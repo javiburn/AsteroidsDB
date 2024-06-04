@@ -1,0 +1,288 @@
+openapi: 3.0.3
+info:
+  title: Asteroids - Altostratus
+  version: 1.0.11
+tags:
+  - name: asteroids
+    description: system to registry and monitor asteroids that threaten the Earth.
+paths:
+  /api/v1/asteroides:
+    post:
+      tags:
+        - asteroids
+      summary: Add a new asteroid to the resgistry
+      description: Add a new asteroid to the resgistry
+      operationId: addAsteroid
+      requestBody:
+        description: Add a new asteroid to the resgistry
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Asteroids'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Asteroids'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Asteroids'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsteroidsId'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AsteroidsId'
+        '400':
+          description: Invalid input
+        '422':
+          description: Validation exception
+      security:
+        - petstore_auth:
+            - write:asteroids
+            - read:asteroids
+    get:
+      tags:
+        - asteroids
+      summary: Get the list with all its elements
+      description: Get the list with all its elements
+      operationId: getAsteroidsList
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AsteroidsId'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AsteroidsId'
+        '400':
+          description: Invalid status value
+      security:
+        - petstore_auth:
+            - write:asteroids
+            - read:asteroids
+  /api/v1/asteroides/{id}:
+    get:
+      tags:
+        - asteroids
+      summary: Finds Asteroids by id
+      description: Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
+      operationId: id
+      parameters:
+        - name: id
+          in: path
+          description: Tags to filter by
+          required: true
+          explode: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AsteroidsId'          
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AsteroidsId'
+        '400':
+          description: Invalid tag value
+        '404':
+          description: Not Found
+      security:
+        - petstore_auth:
+            - write:asteroids
+            - read:asteroids
+    patch:
+      tags:
+        - asteroids
+      summary: Update asteroid's values
+      description: Update asteroid's values
+      operationId: updateAsteroid
+      parameters:
+        - name: id
+          in: path
+          description: ID of asteroid to return
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Add a new asteroid to the resgistry
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateElements'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/UpdateElements'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateElements'
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AsteroidsIdUpdated'          
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AsteroidsIdUpdated'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Asteroid not found
+      security:
+        - api_key: []
+        - petstore_auth:
+            - write:asteroids
+            - read:asteroids
+    delete:
+      tags:
+        - asteroids
+      summary: Deletes an asteroid
+      description: delete an asteroid
+      operationId: deleteAsteroid
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid asteroid value
+        '404':
+          description: Not Found
+      security:
+        - petstore_auth:
+            - write:asteroids
+            - read:asteroids
+  
+components:
+  schemas:
+    Asteroids:
+      required:
+        - name
+        - diameter
+        - discovery_date
+      type: object
+      properties:
+        name:
+          type: string
+          example: Apophis
+        diameter:
+          type: integer
+          format: int64
+          example: 370
+        discovery_date:
+          type: string
+          example: 13-04-2004
+        observations:
+          type: string
+          example: Leve cambio de trayectoria
+        distances:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                example: 2023-01-01
+              distance:
+                type: number
+                example: 0.044
+    AsteroidsId:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 12345
+        name:
+          type: string
+          example: Apophis
+        diameter:
+          type: integer
+          format: int64
+          example: 370
+        discovery_date:
+          type: string
+          example: 13-04-2004
+        observations:
+          type: string
+          example: Leve cambio de trayectoria
+        distances:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                example: 2023-01-01
+              distance:
+                type: number
+                example: 0.044
+    UpdateElements:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Apophis 2.0
+    AsteroidsIdUpdated:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 12345
+        name:
+          type: string
+          example: Apophis 2.0
+        diameter:
+          type: integer
+          format: int64
+          example: 370
+        discovery_date:
+          type: string
+          example: 13-04-2004
+        observations:
+          type: string
+          example: Leve cambio de trayectoria
+        distances:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+                example: 2023-01-01
+              distance:
+                type: number
+                example: 0.044
+  securitySchemes:
+    petstore_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://petstore3.swagger.io/oauth/authorize
+          scopes:
+            write:asteroids: modify asteroids in your account
+            read:asteroids: read your asteroids
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
